@@ -1,0 +1,56 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd   
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+http://www.springframework.org/schema/tx 
+http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+<context:component-scan base-package="com.tcs.controllers" />
+<context:component-scan base-package="com.tcs.model" />
+<context:component-scan base-package="com.tcs.dao" />
+<context:component-scan base-package="com.tcs.business" />
+
+<context:annotation-config />
+<mvc:annotation-driven />
+<mvc:interceptors>
+	<bean id="webContentInterceptor" class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+		<property name="cacheSeconds" value="0" />
+		<property name="useExpiresHeader" value="true" />
+		<property name="useCacheControlHeader" value="true" />
+		<property name="useCacheControlNoStore" value="true" />
+	</bean>
+</mvc:interceptors>
+
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/test?useSSL=false" />
+		<property name="username" value="root" />
+		<property name="password" value="vibhor" />
+	</bean>
+	
+	<bean id="handler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+		<property name="targetUrlParameter" value="targetUrl" />
+	</bean>
+	
+	<bean id="business" class="com.tcs.business.CustomLoginService">
+		<property name="usersByUsernameQuery" value="select * from employees_table where username = ?" />
+		<property name="authoritiesByUsernameQuery" value="select username, role from employee_roles_table where username = ?" />
+	</bean>
+	
+	<bean id="authenticationProvider" class="com.tcs.handler.LoginAuthenticationProvider" />
+
+
+</beans>
